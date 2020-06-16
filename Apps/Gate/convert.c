@@ -140,6 +140,15 @@ void json_to_msg(module_t *module, uint16_t id, module_type_t type, cJSON *jobj,
         time_to_msg(&time, msg);
         luos_send(module, msg);
     }
+    // update time
+    if (cJSON_IsNumber(cJSON_GetObjectItem(jobj, "update_time")) & (type != GATE_MOD))
+    {
+        // this should be a function because it is frequently used
+        time = time_from_sec((float)cJSON_GetObjectItem(jobj, "update_time")->valuedouble);
+        time_to_msg(&time, msg);
+        msg->header.cmd = UPDATE_PUB;
+        luos_send(module, msg);
+    }
     // Compliance
     if (cJSON_IsBool(cJSON_GetObjectItem(jobj, "compliant")))
     {
@@ -467,9 +476,11 @@ void json_to_msg(module_t *module, uint16_t id, module_type_t type, cJSON *jobj,
         }
         break;
     case GATE_MOD:
-        if (cJSON_IsNumber(cJSON_GetObjectItem(jobj, "delay")))
+        if (cJSON_IsNumber(cJSON_GetObjectItem(jobj, "update_time")))
         {
-            set_delay(cJSON_GetObjectItem(jobj, "delay")->valueint);
+            // Put all module with the same time value
+            set_update_time(time_from_sec((float)cJSON_GetObjectItem(jobj, "update_time")->valuedouble));
+            collect_data(module);
         }
         break;
     default:

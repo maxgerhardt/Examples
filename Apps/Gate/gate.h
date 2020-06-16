@@ -3,6 +3,8 @@
 
 #include "luos.h"
 
+#define DEFAULT_REFRESH_MS 0.01f
+
 void gate_init(void);
 void gate_loop(void);
 #ifdef USE_SERIAL

@@ -115,7 +115,6 @@ void gate_loop(void)
                 keepAlive++;
             }
         }
-        collect_data(module);
     }
     if (pub != LUOS_PROTOCOL_NB)
     {
@@ -134,8 +133,8 @@ void gate_loop(void)
 #else
         printf(json);
 #endif
+        collect_data(module);
         detection_done = 1;
         detection_ask = 0;
     }
-    HAL_Delay(get_delay());
 }
